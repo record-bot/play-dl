@@ -21,33 +21,34 @@ You can contact us for support on our [chat server](https://discord.gg/8H3xWcv3D
 **Node.js 16.0.0 or newer is required.**
 
 ```bash
-npm install play-dl@latest
-pnpm add play-dl@latest
-yarn add play-dl@latest
+npm install @recordbot/play-dl@latest
+pnpm add @recordbot/play-dl@latest
+yarn add @recordbot/play-dl@latest
+bun add @recordbot/play-dl@latest
 ```
 
 ### Importing
 
 **TypeScript:**
 ```ts
-import play from 'play-dl'; // Everything
+import play from '@recordbot/play-dl'; // Everything
 
-import { video_basic_info, stream } from 'play-dl'; // Individual functions
+import { video_basic_info, stream } from '@recordbot/play-dl'; // Individual functions
 ```
 
 **CommonJS modules:**
 ```js
-const play = require('play-dl'); // Everything
+const play = require('@recordbot/play-dl'); // Everything
 
 // Individual functions by using destructuring
-const { video_basic_info, stream } = require('play-dl');
+const { video_basic_info, stream } = require('@recordbot/play-dl');
 ```
 
 **ES6 modules:**
 ```ts
-import play from 'play-dl'; // Everything
+import play from '@recordbot/play-dl'; // Everything
 
-import { video_basic_info, stream } from 'play-dl'; // Individual functions
+import { video_basic_info, stream } from '@recordbot/play-dl'; // Individual functions
 ```
 
 ## **Compatibility issues** - discord-player
