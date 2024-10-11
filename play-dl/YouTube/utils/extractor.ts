@@ -295,17 +295,19 @@ export async function video_basic_info(url: string, options: InfoOptions = {}): 
         music,
         chapters
     });
-    let format = [];
+    let format: any[] = [];
     if (!upcoming) {
-        format.push(...(player_response.streamingData.formats ?? []));
-        format.push(...(player_response.streamingData.adaptiveFormats ?? []));
+        // format.push(...(player_response.streamingData.formats ?? []));
+        // format.push(...(player_response.streamingData.adaptiveFormats ?? []));
 
-        // get the formats for the android player for legacy videos
-        // fixes the stream being closed because not enough data
-        // arrived in time for ffmpeg to be able to extract audio data
-        if (parseAudioFormats(format).length === 0 && !options.htmldata) {
-            format = await getAndroidFormats(vid.videoId, cookieJar, body);
-        }
+        // // get the formats for the android player for legacy videos
+        // // fixes the stream being closed because not enough data
+        // // arrived in time for ffmpeg to be able to extract audio data
+        // if (parseAudioFormats(format).length === 0 && !options.htmldata) {
+        //     format = await getAndroidFormats(vid.videoId, cookieJar, body);
+        // }
+
+        format = await getIosFormats(vid.videoId, cookieJar, body);
     }
     const LiveStreamData = {
         isLive: video_details.live,
@@ -402,17 +404,15 @@ export async function video_stream_info(url: string, options: InfoOptions = {}):
         url: `https://www.youtube.com/watch?v=${player_response.videoDetails.videoId}`,
         durationInSec: (duration < 0 ? 0 : duration) || 0
     };
-    let format = [];
+    let format: any[] = [];
     if (!upcoming) {
-        format.push(...(player_response.streamingData.formats ?? []));
-        format.push(...(player_response.streamingData.adaptiveFormats ?? []));
+        // format.push(...(player_response.streamingData.formats ?? []));
+        // format.push(...(player_response.streamingData.adaptiveFormats ?? []));
 
         // get the formats for the android player for legacy videos
         // fixes the stream being closed because not enough data
         // arrived in time for ffmpeg to be able to extract audio data
-        if (parseAudioFormats(format).length === 0 && !options.htmldata) {
-            format = await getAndroidFormats(player_response.videoDetails.videoId, cookieJar, body);
-        }
+        format = await getIosFormats(player_response.videoDetails.videoId, cookieJar, body);
     }
 
     const LiveStreamData = {
@@ -680,7 +680,7 @@ async function acceptViewerDiscretion(
     return { streamingData };
 }
 
-async function getAndroidFormats(videoId: string, cookieJar: { [key: string]: string }, body: string): Promise<any[]> {
+async function getIosFormats(videoId: string, cookieJar: { [key: string]: string }, body: string): Promise<any[]> {
     const apiKey =
         body.split('INNERTUBE_API_KEY":"')[1]?.split('"')[0] ??
         body.split('innertubeApiKey":"')[1]?.split('"')[0] ??
@@ -691,8 +691,11 @@ async function getAndroidFormats(videoId: string, cookieJar: { [key: string]: st
         body: JSON.stringify({
             context: {
                 client: {
-                    clientName: 'ANDROID',
-                    clientVersion: '16.49',
+                    clientName: 'IOS',
+                    clientVersion: '19.29.1',
+                    deviceMake: 'Apple',
+                    deviceModel: 'iPhone16,2',
+                    userAgent: 'com.google.ios.youtube/19.29.1 (iPhone16,2; U; CPU iOS 17_5_1 like Mac OS X;)',
                     hl: 'en',
                     timeZone: 'UTC',
                     utcOffsetMinutes: 0
@@ -707,7 +710,7 @@ async function getAndroidFormats(videoId: string, cookieJar: { [key: string]: st
         cookieJar
     });
 
-    return JSON.parse(response).streamingData.formats;
+    return JSON.parse(response).streamingData.adaptiveFormats;
 }
 
 function getWatchPlaylist(response: any, body: any, url: string): YouTubePlayList {
